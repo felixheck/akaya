@@ -2,6 +2,7 @@
 
 ### unreleased
 - **doc:** fix bugs
+- **fix:** babel plugins and presets
 
 ### [v0.0.2] - 2016-06-03
 - **doc:** add and fix changelog
