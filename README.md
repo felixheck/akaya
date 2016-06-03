@@ -1,7 +1,7 @@
 # akaya
 #### Generate URIs based on named [hapi](https://github.com/hapijs/hapi) routes, their ID and parameters
 
-[![Travis](https://img.shields.io/travis/felixheck/akaya.svg?maxAge=2592000)](https://travis-ci.org/felixheck/akaya/builds/) ![node](https://img.shields.io/node/v/akaya.svg?maxAge=2592000) ![npm](https://img.shields.io/npm/dt/akaya.svg?maxAge=2592000)
+[![Travis](https://img.shields.io/travis/felixheck/akaya.svg?maxAge=2592000)](https://travis-ci.org/felixheck/akaya/builds/) ![npm](https://img.shields.io/npm/dt/akaya.svg?maxAge=2592000)
 
 ---
 
