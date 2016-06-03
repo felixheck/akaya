@@ -180,7 +180,7 @@ Do not forget to add corresponding tests to keep up 100% test coverage.
 If you have any questions or suggestions please open an issue.
 
 ## License
-Copyright (c) 2015-2016, Matt Harrison and 2016, Felix Heck
+Copyright (c) Matt Harrison (2015-2016) and Felix Heck (2016)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
