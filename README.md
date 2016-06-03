@@ -1,3 +1,5 @@
+![akaya](https://raw.githubusercontent.com/felixheck/akaya/master/logo.png)
+
 # akaya
 #### Generate URIs based on named [hapi](https://github.com/hapijs/hapi) routes, their ID and parameters
 
