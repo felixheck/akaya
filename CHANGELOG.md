@@ -1,10 +1,13 @@
 # master
 
 ### unreleased
+
+### [v0.0.3] - 2016-06-03
 - **doc:** fix bugs
 - **fix:** babel plugins and presets
 - **fix:** pkg.license
 - **doc:** update license
+- **doc:** update CHANGELOG.md
 
 ### [v0.0.2] - 2016-06-03
 - **doc:** add and fix changelog
