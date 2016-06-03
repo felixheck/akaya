@@ -1,6 +1,7 @@
 # master
 
 ### unreleased
+- **doc:** fix bugs
 
 ### [v0.0.2] - 2016-06-03
 - **doc:** add and fix changelog

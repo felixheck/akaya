@@ -38,7 +38,7 @@ $ npm install --save akaya
 or clone the repository:
 ```
 // development version with ES6 syntax
-$ git clone https://github.com/mtharrison/akaya
+$ git clone https://github.com/felixheck/akaya
 ```
 ## Usage
 #### Change from `hapi-to` to `akaya`
@@ -180,7 +180,7 @@ Do not forget to add corresponding tests to keep up 100% test coverage.
 If you have any questions or suggestions please open an issue.
 
 ## License
-Copyright (c) 2016, Felix Heck
+Copyright (c) 2015-2016, Matt Harrison and 2016, Felix Heck
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
