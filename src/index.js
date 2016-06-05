@@ -74,7 +74,7 @@ function parseMulti(params, section, stripped) {
 
   Hoek.assert(
     parseInt(split[1], 10) === value.length,
-    'The number of passed multi-parameter does not match the multiplier'
+    'The number of passed multi-parameters does not match the defined multiplier'
   );
 
   const src = value.join('/');
@@ -123,7 +123,7 @@ function akaya(server, pluginOptions, next) {
 
     Hoek.assert(
       !Hoek.deepEqual({}, route),
-      'There is no matching route available'
+      'None of the defined routes match the ID'
     );
 
     const routeSections = route.path.match(internals.regexp.params) || [];
