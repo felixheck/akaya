@@ -1,6 +1,6 @@
 {
   "name": "akaya",
-  "description": "Generate URIs based on named hapi routes, their ID and parameters",
+  "description": "Generate URIs based on named hapi routes and their parameters",
   "keywords": [
     "hapi",
     "url",
@@ -23,7 +23,6 @@
     "email": "hi@whoTheHeck.com",
     "url": "https://github.com/felixheck/akaya/issues"
   },
-  "homepage": "https://github.com/mtharrison/hapi-to",
   "main": "./lib/index.js",
   "config": {
     "tapeOptions": "-r babel-core/register test/**/*.spec.js"

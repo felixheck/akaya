@@ -1,7 +1,7 @@
 ![akaya](https://raw.githubusercontent.com/felixheck/akaya/master/logo.png)
 
 # akaya
-#### Generate URIs based on named [hapi](https://github.com/hapijs/hapi) routes, their ID and parameters
+#### Generate URIs based on named [hapi](https://github.com/hapijs/hapi) routes and their parameters
 
 [![Travis](https://img.shields.io/travis/felixheck/akaya.svg?maxAge=2592000)](https://travis-ci.org/felixheck/akaya/builds/) ![npm](https://img.shields.io/npm/dt/akaya.svg?maxAge=2592000)
 
@@ -18,15 +18,9 @@
 
 ## Introduction
 
-This plugin gives you an API for generating URLs dynamically in [hapi](https://github.com/hapijs/hapi) using route ids and optional parameters, so you don't need to hardcode them into your views. This helps a bunch if you change the path structure of your routes, or move them into prefixed plugins in the future.
+This [hapi](https://github.com/hapijs/hapi) plugin enables to generate URIs dynamically based on the `config.id` of a route and passed parameters. It supports mandatory, multiple and optionals parameters as well as wildcards. Because it is not necessary to hardcode the URIs, it supersedes further adjustments in the case of refactoring.
 
-This plugin is based on [hapi-to](https://github.com/mtharrison/hapi-to) but is about 30x faster. The plugin is implemented in ECMAScript 6, therefore the development dependencies are based on `babel`. Additionally `eslint` and `tape` are used to grant a high quality implementation.
-
-**Features**
- - Let's you change paths without breaking existing links + redirects
- - 100% test coverage
- - Works with query and path params (including wildcard, optional and multi-params)
- - Configurable with options
+This plugin is based on a [hapi-to](https://github.com/mtharrison/hapi-to) fork but it is about 30x faster. The plugin is implemented in ECMAScript 6, therefore the development dependencies are based on `babel`. Additionally `eslint` and `tape` are used to grant a high quality implementation.
 
 ## Installation
 For installation use the [Node Package Manager](https://github.com/npm/npm):
@@ -40,9 +34,12 @@ or clone the repository:
 // development version with ES6 syntax
 $ git clone https://github.com/felixheck/akaya
 ```
+
 ## Usage
 #### Change from `hapi-to` to `akaya`
-So change from `hapi-to` to `akaya` for performance reasons, just replace the `require` and use `request.aka` instead of `request.to`.
+If you want to change from `hapi-to` to `akaya` for performance reasons, just replace the `require` and use `request.aka` instead of `request.to`. Because the configuration is almost the same, the migration is seamless.
+
+It just differs in the [configuration](#api) of `options.secure`. The option `"match"` is not available in `akaya`. The plugin matches the current request's connections protocol automatically.
 
 #### Import
 First you have to import the module:
@@ -56,7 +53,7 @@ Afterwards create your hapi server and the corresponding connection if not alrea
 const server = new Hapi.Server();
 
 server.connection({
-  port: 8888,
+  port: 1337,
   host: 'localhost',
 });
 ```
@@ -73,19 +70,19 @@ server.register(akaya, err => {
 });
 ```
 
-After registering, `akaya` will decorate the [hapi request object](hapijs.com/api#request-object) with a new method: `request.aka()`.
+After registering `akaya`, the [hapi request object](hapijs.com/api#request-object) will be decorated with the new method `request.aka()`.
 
 ## API
 `request.aka(id, [params], [options])`
 
-Returns a URL to a route
-- `id` - required routes `config.id`.
+Returns an URI to a route
+- `id` - [string] required routes `config.id`.
 - `params`
   - `query` - [Object.<?string>] Necessary query parameters, which will be stringified.
   - `params` - [Object.<?string | Array.<?string>] Necessary path parameters.
 - `options`
-  - `rel` - [Boolean] Whether to generate a relative URL. Default: `false`.
-  - `secure` - [Boolean] If `true` the URL will be https, if `false` will be http. Default: match the x-forwarded-proto header or the current request's connection protocol.
+  - `rel` - [boolean] Whether to generate a relative URL. Default: `false`.
+  - `secure` - [boolean] If `true` the URL will be https, if `false` will be http. Default: match the `x-forwarded-proto` header or the current request's connection protocol.
   - `host` - [string] Sets the host in the URL. Default: match the current request.
 
 ##Example
@@ -95,14 +92,14 @@ const Hapi = require('hapi');
 const akaya = require('akaya');
 
 const server = new Hapi.Server();
-server.connection({ port: 8080 });
+server.connection({ port: 1337 });
 
 server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-        const url = request.aka('hello', {
-            params: { thing: 'stitch', num: 'nine' },
+        const url = request.aka('foo', {
+            params: { object: 'world' },
             query: { page: '1' }
         });
 
@@ -112,28 +109,28 @@ server.route([{
     method: 'GET',
     path: '/multi',
     handler: function (request, reply) {
-        const url = request.aka('rick', {
-            params: { multi: ['never', 'gonna', 'give', 'you', 'up'] }
+        const url = request.aka('bar', {
+            params: { multi: [42, is, sense, of life] }
         });
 
         return reply.redirect(url);
     }
 }, {
     method: 'GET',
-    path: '/a/{thing}/in/{num}/saves/time',
+    path: '/hello/{object}',
     config: {
-        id: 'hello',
+        id: 'foo',
         handler: function (request, reply) {
-					return reply('You got here!');
+					return reply('No more redirects.');
         }
     }
 }, {
     method: 'GET',
     path: '/{multi*5}',
     config: {
-        id: 'rick',
+        id: 'bar',
         handler: function (request, reply) {
-            reply('You got here!');
+            reply('No more redirects.');
         }
     }
 }]);
@@ -147,9 +144,10 @@ server.register(akaya, err => {
 });
 ```
 
-If you run the above example and navigate to `http://localhost:8080/` you will be redirected to `http://localhost:8080/a/stitch/in/nine/saves/time?page=1`.
+The example above make use of redirects and `akaya`:
 
-If you navigate to `http://localhost:8080/multi` you will be redirected to `http://localhost:8080/never/gonna/give/you/up`.
+The route `http://localhost:1337/` will be redirected to `http://localhost:1337/hello/world?page=1`.<br/>
+And the route `http://localhost:1337/multi` will be redirected to `http://localhost:1337/42/is/sense/of/life`.
 
 ## Testing
 First you have to install all dependencies:
@@ -177,7 +175,7 @@ Fork this repository and push in your ideas.
 
 Do not forget to add corresponding tests to keep up 100% test coverage.
 
-If you have any questions or suggestions please open an issue.
+In case of questions or suggestions just open an issue.
 
 ## License
 Copyright (c) Matt Harrison (2015-2016) and Felix Heck (2016)
