@@ -1,6 +1,15 @@
 const Hapi = require('hapi');
 const plugin = require('../src');
 
+/**
+ * @function
+ * @public
+ * 
+ * @description
+ * Setup and expose an Hapi server connection
+ * 
+ * @returns {Object} The needed fixtures
+ */
 const setup = () => {
   const fixtures = {
     server: new Hapi.Server(),
