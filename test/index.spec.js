@@ -244,6 +244,27 @@ test('akaya >> strips optional params from path if none specified', t => {
   });
 });
 
+test('akaya >> strips trailing slash after stripping optional parameters', t => {
+  const { server } = setup();
+
+  server.route([{
+    method: 'GET',
+    path: '/{param?}',
+    config: {
+      id: 'foo',
+      handler: function (request, reply) {
+        reply(request.aka('foo'));
+      }
+    }
+  }]);
+
+  server.inject('/', res => {
+    t.equal(res.statusCode, 200);
+    t.equal(res.payload, 'http://localhost:1337');
+    t.end();
+  });
+});
+
 test('akaya >> appends a query string', t => {
   const { server } = setup();
 
