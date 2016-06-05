@@ -4,6 +4,7 @@
 - **doc:** improve documentation
 - **doc:** add doc block
 - **fix:** error messages
+- **fix:** test specification
 
 ### [v0.0.3] - 2016-06-03
 - **doc:** fix bugs

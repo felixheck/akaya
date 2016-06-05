@@ -1,20 +1,20 @@
 const test = require('tape').test;
 const { setup } = require('./utils');
 
-test('akaya >> can get a URL to a named route', t => {
+test('akaya >> gets a URI to a named route', t => {
   const { server } = setup();
   
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('hello'));
+      reply(request.aka('foo'));
     }
   }, {
     method: 'GET',
-    path: '/hello',
+    path: '/foo',
     config: {
-      id: 'hello',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -22,20 +22,20 @@ test('akaya >> can get a URL to a named route', t => {
   }]);
   
   server.inject('/', res => {
-    t.equal(res.payload, 'http://localhost:1337/hello');
+    t.equal(res.payload, 'http://localhost:1337/foo');
     t.end();
   });
 });
 
-test('akaya >> works with routes inside plugins with prefixes', t => {
+test('akaya >> works with routes inside prefixed plugins', t => {
   const { server } = setup();
 
   function plugin(serv, options, next) {
     serv.route({
       method: 'GET',
-      path: '/hello',
+      path: '/foo',
       config: {
-        id: 'hello',
+        id: 'foo',
         handler: function (request, reply) {
           reply();
         }
@@ -51,84 +51,84 @@ test('akaya >> works with routes inside plugins with prefixes', t => {
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('hello'));
+      reply(request.aka('foo'));
     }
   });
 
-  server.register(plugin, { routes: { prefix: '/prefixed-with' } }, function () {
+  server.register(plugin, { routes: { prefix: '/prefix' } }, function () {
     server.inject('/', function (res) {
 
-      t.equal(res.payload, 'http://localhost:1337/prefixed-with/hello');
+      t.equal(res.payload, 'http://localhost:1337/prefix/foo');
       t.end();
     });
   });
 });
 
-test('akaya >> throws if there\'s no matching route', t => {
+test('akaya >> throws if no route matches', t => {
   const { server } = setup();
 
   server.route({
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('hello'));
+      reply(request.aka('foo'));
     }
   });
 
-  t.throws(() => server.inject('/', res => {}), /Error/);
+  t.throws(() => server.inject('/', res => {}), /error/i);
   t.end();
 });
 
-test('akaya >> throws if there\'s no specified params for a path with params', t => {
+test('akaya >> throws if there is a missing parameter', t => {
   const { server } = setup();
 
   server.route({
     config: {
-      id: 'hello'
+      id: 'foo'
     },
     method: 'GET',
     path: '/{name}',
     handler: function (request, reply) {
-      reply(request.aka('hello'));
+      reply(request.aka('foo'));
     }
   });
 
-  t.throws(() => server.inject('/john', res => {}), /Error/);
+  t.throws(() => server.inject('/bar', res => {}), /error/i);
   t.end();
 });
 
-test('akaya >> throws if there\'s a mismatch in number of params required and given', t => {
+test('akaya >> throws if there is s a mismatch in number of parameters required and given', t => {
   const { server } = setup();
 
   server.route({
     config: {
-      id: 'hello'
+      id: 'foo'
     },
     method: 'GET',
-    path: '/{hello}/to/{name}',
+    path: '/{greet}/{object}',
     handler: function (request, reply) {
-      reply(request.aka('hello', { params: { hello: 'there' } }));
+      reply(request.aka('foo', { params: { greet: 'hello' } }));
     }
   });
 
-  t.throws(() => server.inject('/hello/to/you', res => {}), /Error/);
+  t.throws(() => server.inject('/hello/world', res => {}), /error/i);
   t.end();
 });
 
-test('akaya >> can place params in the URL', t => {
+test('akaya >> can place parameters in the URL', t => {
   const { server } = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('me', { params: { name: 'matt', age: '29' } }));
+      reply(request.aka('foo', { params: { greet: 'hello', object: 'world' } }));
     }
   }, {
     method: 'GET',
-    path: '/i/am/{name}/and/age/{age}',
+    path: '/{greet}/{object}',
     config: {
-      id: 'me',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -136,25 +136,25 @@ test('akaya >> can place params in the URL', t => {
   }]);
 
   server.inject('/', res => {
-    t.equal(res.payload, 'http://localhost:1337/i/am/matt/and/age/29');
+    t.equal(res.payload, 'http://localhost:1337/hello/world');
     t.end();
   });
 });
 
-test('akaya >> works on wildcard params', t => {
+test('akaya >> works on wildcard parameters', t => {
   const { server} = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('me', { params: { path: 'something/good' } }));
+      reply(request.aka('foo', { params: { path: 'hello/world' } }));
     }
   }, {
     method: 'GET',
     path: '/{path*}',
     config: {
-      id: 'me',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -162,25 +162,25 @@ test('akaya >> works on wildcard params', t => {
   }]);
 
   server.inject('/', res => {
-    t.equal(res.payload, 'http://localhost:1337/something/good');
+    t.equal(res.payload, 'http://localhost:1337/hello/world');
     t.end();
   });
 });
 
-test('akaya >> works on multi params', t => {
+test('akaya >> works on multiple parameters', t => {
   const { server } = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('me', { params: { path: ['a', 'b', 'c'] } }));
+      reply(request.aka('foo', { params: { path: ['hello', 'foo', 'bar'] } }));
     }
   }, {
     method: 'GET',
     path: '/{path*3}',
     config: {
-      id: 'me',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -188,49 +188,49 @@ test('akaya >> works on multi params', t => {
   }]);
 
   server.inject('/', res => {
-    t.equal(res.payload, 'http://localhost:1337/a/b/c');
+    t.equal(res.payload, 'http://localhost:1337/hello/foo/bar');
     t.end();
   });
 });
 
-test('akaya >> throws if incorrect num of params given for multi param path', t => {
+test('akaya >> throws if number of parameters mismatches the multiplier', t => {
   const { server } = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('me', { params: { path: ['a', 'b'] } }));
+      reply(request.aka('foo', { params: { path: ['hello', 'foo'] } }));
     }
   }, {
     method: 'GET',
     path: '/{path*3}',
     config: {
-      id: 'me',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
     }
   }]);
 
-  t.throws(() => server.inject('/', res => {}), /Error/);
+  t.throws(() => server.inject('/', res => {}), /error/i);
   t.end();
 });
 
-test('akaya >> Strips optional params from path if none specified', t => {
+test('akaya >> strips optional params from path if none specified', t => {
   const { server } = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('route'));
+      reply(request.aka('foo'));
     }
   }, {
     method: 'GET',
-    path: '/optional/{param?}',
+    path: '/foobar/{param?}',
     config: {
-      id: 'route',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -239,34 +239,30 @@ test('akaya >> Strips optional params from path if none specified', t => {
 
   server.inject('/', res => {
     t.equal(res.statusCode, 200);
-    t.equal(res.payload, 'http://localhost:1337/optional');
+    t.equal(res.payload, 'http://localhost:1337/foobar');
     t.end();
   });
 });
 
-test('akaya >> can append a query string', t => {
+test('akaya >> appends a query string', t => {
   const { server } = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('me', {
-        params: {
-          name: 'matt',
-          age: '29'
-        },
+      reply(request.aka('foo', {
         query: {
-          good: 'morning',
-          night: 'night'
+          greet: 'hello',
+          object: 'world'
         }
       }));
     }
   }, {
     method: 'GET',
-    path: '/i/am/{name}/and/age/{age}',
+    path: '/foobar',
     config: {
-      id: 'me',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -274,8 +270,7 @@ test('akaya >> can append a query string', t => {
   }]);
 
   server.inject('/', res => {
-
-    t.equal(res.payload, 'http://localhost:1337/i/am/matt/and/age/29?good=morning&night=night');
+    t.equal(res.payload, 'http://localhost:1337/foobar?greet=hello&object=world');
     t.end();
   });
 });

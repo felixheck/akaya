@@ -1,20 +1,20 @@
 const test = require('tape').test;
 const { setup } = require('./utils');
 
-test('akaya/options >> secure option when `true` forces https', t => {
+test('akaya/options.secure >> `true` forces https', t => {
   const { server } = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('hello', {}, { secure: true }));
+      reply(request.aka('foo', {}, { secure: true }));
     }
   }, {
     method: 'GET',
-    path: '/hello',
+    path: '/foo',
     config: {
-      id: 'hello',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -22,25 +22,25 @@ test('akaya/options >> secure option when `true` forces https', t => {
   }]);
 
   server.inject('/', res => {
-    t.equal(res.payload, 'https://localhost:1337/hello');
+    t.equal(res.payload, 'https://localhost:1337/foo');
     t.end();
   });
 });
 
-test('akaya/options >> secure option when `false` forces http', t => {
+test('akaya/options.secure >> `false` forces http', t => {
   const { server } = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('hello', {}, { secure: false }));
+      reply(request.aka('foo', {}, { secure: false }));
     }
   }, {
     method: 'GET',
-    path: '/hello',
+    path: '/foo',
     config: {
-      id: 'hello',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -48,12 +48,12 @@ test('akaya/options >> secure option when `false` forces http', t => {
   }]);
 
   server.inject('/', res => {
-    t.equal(res.payload, 'http://localhost:1337/hello');
+    t.equal(res.payload, 'http://localhost:1337/foo');
     t.end();
   });
 });
 
-test('akaya/options >> auto detecting secure option when not set', t => {
+test('akaya/options.secure >> auto detecting secure option as default', t => {
   const { server } = setup();
   
   const options = {
@@ -76,13 +76,13 @@ test('akaya/options >> auto detecting secure option when not set', t => {
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('hello', {}));
+      reply(request.aka('foo', {}));
     }
   }, {
     method: 'GET',
-    path: '/hello',
+    path: '/foo',
     config: {
-      id: 'hello',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -90,29 +90,29 @@ test('akaya/options >> auto detecting secure option when not set', t => {
   }]);
 
   server.inject(options, res =>{
-    t.equal(res.payload, 'http://localhost:1337/hello');
+    t.equal(res.payload, 'http://localhost:1337/foo');
 
     server.inject(options2, res2 => {
-      t.equal(res2.payload, 'https://localhost:1337/hello');
+      t.equal(res2.payload, 'https://localhost:1337/foo');
       t.end();
     });
   });
 });
 
-test('akaya/options >> gives a relative url when rel is true', t => {
+test('akaya/options.rel >> `true` returns a relative URI', t => {
   const { server } = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('hello', { }, { rel: true }));
+      reply(request.aka('foo', { }, { rel: true }));
     }
   }, {
     method: 'GET',
-    path: '/hello',
+    path: '/foo',
     config: {
-      id: 'hello',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -120,25 +120,25 @@ test('akaya/options >> gives a relative url when rel is true', t => {
   }]);
 
   server.inject('/', res => {
-    t.equal(res.payload, '/hello');
+    t.equal(res.payload, '/foo');
     t.end();
   });
 });
 
-test(' akaya/options >> can override the host with host option', t => {
+test(' akaya/options.host >> overrides the host if set', t => {
   const { server } = setup();
 
   server.route([{
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      reply(request.aka('hello', { }, { host: 'beef.io:5000' }));
+      reply(request.aka('foo', { }, { host: 'foobar.io:5000' }));
     }
   }, {
     method: 'GET',
-    path: '/hello',
+    path: '/foo',
     config: {
-      id: 'hello',
+      id: 'foo',
       handler: function (request, reply) {
         reply();
       }
@@ -146,7 +146,7 @@ test(' akaya/options >> can override the host with host option', t => {
   }]);
 
   server.inject('/', res => {
-    t.equal(res.payload, 'http://beef.io:5000/hello');
+    t.equal(res.payload, 'http://foobar.io:5000/foo');
     t.end();
   });
 });
