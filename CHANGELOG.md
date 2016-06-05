@@ -2,6 +2,7 @@
 
 ### unreleased
 - **doc:** fix CHANGELOG.md
+- **doc:** fix README.md
 
 ### [v0.1.0] - 2016-06-05
 - **doc:** improve documentation

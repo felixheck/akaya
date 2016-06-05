@@ -39,7 +39,7 @@ $ git clone https://github.com/felixheck/akaya
 #### Change from `hapi-to` to `akaya`
 If you want to change from `hapi-to` to `akaya` for performance reasons, just replace the `require` and use `request.aka` instead of `request.to`. Because the configuration is almost the same, the migration is seamless.
 
-It just differs in the [configuration](#api) of `options.secure`. The option `"match"` is not available in `akaya`. The plugin matches the current request's connections protocol automatically.
+It just differs in the [configuration](#api) of `options.secure`. The value `"match"` is not available in `akaya`. The plugin matches the current request's connections protocol automatically as default.
 
 #### Import
 First you have to import the module:
@@ -76,14 +76,14 @@ After registering `akaya`, the [hapi request object](hapijs.com/api#request-obje
 `request.aka(id, [params], [options])`
 
 Returns an URI to a route
-- `id` - [string] required routes `config.id`.
+- `id {string}` - required routes `config.id`.
 - `params`
-  - `query` - [Object.<?string>] Necessary query parameters, which will be stringified.
-  - `params` - [Object.<?string | Array.<?string>] Necessary path parameters.
+  - `query {Object.<?string>}` - Necessary query parameters, which will be stringified.
+  - `params {Object.<?string>}` - Necessary path parameters.
 - `options`
-  - `rel` - [boolean] Whether to generate a relative URL. Default: `false`.
-  - `secure` - [boolean] If `true` the URL will be https, if `false` will be http. Default: match the `x-forwarded-proto` header or the current request's connection protocol.
-  - `host` - [string] Sets the host in the URL. Default: match the current request.
+  - `rel {boolean}` - Whether to generate a relative URL. Default: `false`.
+  - `secure {boolean}` - If `true` the URL will be https, if `false` will be http. Default: match the `x-forwarded-proto` header or the current request's connection protocol.
+  - `host {string}` - Sets the host in the URL. Default: match the current request.
 
 ##Example
 
