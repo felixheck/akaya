@@ -1,6 +1,9 @@
 # master
 
 ### unreleased
+- **doc:** fix CHANGELOG.md
+
+### [v0.1.0] - 2016-06-05
 - **doc:** improve documentation
 - **doc:** add doc block
 - **fix:** error messages
