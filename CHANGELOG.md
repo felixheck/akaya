@@ -1,9 +1,12 @@
 # master
 
 ### unreleased
+
+### [v0.1.1] - 2016-06-11
 - **doc:** fix CHANGELOG.md
 - **doc:** fix README.md
 - **upg:** joi (-> 8.4.1), babel-cli (-> 6.10.1) and es-lint (-> 2.12.0)
+- **doc:** update CHANGELOG.md
 
 ### [v0.1.0] - 2016-06-05
 - **doc:** improve documentation
