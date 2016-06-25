@@ -295,3 +295,33 @@ test('akaya >> appends a query string', t => {
     t.end();
   });
 });
+
+test('akaya >> strips a trailing question mark if query paramter is undefined', t => {
+  const { server } = setup();
+
+  server.route([{
+    method: 'GET',
+    path: '/',
+    handler: function (request, reply) {
+      reply(request.aka('foo', {
+        query: {
+          greet: undefined
+        }
+      }));
+    }
+  }, {
+    method: 'GET',
+    path: '/foobar',
+    config: {
+      id: 'foo',
+      handler: function (request, reply) {
+        reply();
+      }
+    }
+  }]);
+
+  server.inject('/', res => {
+    t.equal(res.payload, 'http://localhost:1337/foobar');
+    t.end();
+  });
+});

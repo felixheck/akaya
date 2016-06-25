@@ -1,6 +1,7 @@
 # master
 
 ### unreleased
+- **add:** tests for stripping trailing question marks
 
 ### [v0.1.2] - 2016-06-25
 - **upg:** eslint (-> 2.13.0), eslint-plugin-jsx-a11y (-> 1.5.3) and joi (-> 8.4.2)
