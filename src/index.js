@@ -145,6 +145,7 @@ function akaya(server, pluginOptions, next) {
 
     if (params.query) {
       route.path += `?${Querystring.stringify(params.query)}`;
+      route.path = route.path.replace(/\?$/, '');
     }
 
     if (options.rel) {
