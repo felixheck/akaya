@@ -59,6 +59,6 @@
     "qs": "^6.2.1"
   },
   "peerDependencies": {
-    "hapi": "13.x.x"
+    "hapi": ">= 13.x.x"
   }
 }

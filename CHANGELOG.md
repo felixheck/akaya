@@ -3,6 +3,7 @@
 ### unreleased
 - **upg:** several development dependencies
 - **upg:** several dev and prod dependencies
+- **upg:** peer dependency
 
 ### [v0.1.3] - 2016-07-02
 - **add:** tests for stripping trailing question marks
