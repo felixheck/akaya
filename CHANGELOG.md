@@ -1,10 +1,13 @@
 # master
 
 ### unreleased
+
+### [v0.2.0] - 2016-09-21
 - **upg:** several development dependencies
 - **upg:** several dev and prod dependencies
 - **upg:** peer dependency
 - **add:** custom 'arrow-parens' eslint rule
+- **doc:** update version
 
 ### [v0.1.3] - 2016-07-02
 - **add:** tests for stripping trailing question marks
