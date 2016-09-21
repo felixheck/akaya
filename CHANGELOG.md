@@ -4,6 +4,7 @@
 - **upg:** several development dependencies
 - **upg:** several dev and prod dependencies
 - **upg:** peer dependency
+- **add:** custom 'arrow-parens' eslint rule
 
 ### [v0.1.3] - 2016-07-02
 - **add:** tests for stripping trailing question marks
