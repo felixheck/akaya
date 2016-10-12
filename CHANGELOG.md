@@ -1,6 +1,8 @@
 # master
 
 ### unreleased
+- **upg:** several dev and prod dependencies
+- **add:** yarn support
 
 ### [v0.2.0] - 2016-09-21
 - **upg:** several development dependencies

@@ -35,6 +35,12 @@ or clone the repository:
 $ git clone https://github.com/felixheck/akaya
 ```
 
+Alternatively use the [Yarn Package Manager](https://yarnpkg.com):
+```
+// production version with ES5 syntax
+$ yarn add akaya
+```
+
 ## Usage
 #### Change from `hapi-to` to `akaya`
 If you want to change from `hapi-to` to `akaya` for performance reasons, just replace the `require` and use `request.aka` instead of `request.to`. Because the configuration is almost the same, the migration is seamless.
