@@ -1,9 +1,12 @@
 # master
 
 ### unreleased
+
+### [v0.3.0] - 2016-10-12
 - **upg:** several dev and prod dependencies
 - **add:** yarn support
 - **rmv:** unneeded linting rules
+- **doc:** update version
 
 ### [v0.2.0] - 2016-09-21
 - **upg:** several development dependencies
