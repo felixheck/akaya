@@ -3,6 +3,7 @@
 ### unreleased
 - **upg:** several dev and prod dependencies
 - **add:** yarn support
+- **rmv:** unneeded linting rules
 
 ### [v0.2.0] - 2016-09-21
 - **upg:** several development dependencies
