@@ -13,7 +13,7 @@ const pkg = require('../package.json');
  */
 const internals = {
   regexp: {
-    braces: /[\{\}']+/g,
+    braces: /[{}']+/g,
     params: /\{(\w+\*?|\w+\?|\w+\*[1-9][0-9]*)\}/g,
     wildcard: /\*$/g,
   },
@@ -70,12 +70,12 @@ function parseMulti(params, section, stripped) {
 
   Hoek.assert(
     Array.isArray(value),
-    `The ${stripped} parameter should be an array`
+    `The ${stripped} parameter should be an array`,
   );
 
   Hoek.assert(
     parseInt(split[1], 10) === value.length,
-    'The number of passed multi-parameters does not match the defined multiplier'
+    'The number of passed multi-parameters does not match the defined multiplier',
   );
 
   const src = value.join('/');
@@ -122,7 +122,7 @@ function lookupRoute(server, id) {
   if (server.connections.length === 1) {
     route = server.lookup(id);
   } else {
-    _.some(server.connections, (connection) => {
+    _.some(server.connections, connection => {
       route = connection.lookup(id);
       return route;
     });
