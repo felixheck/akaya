@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const Hoek = require('hoek');
 const Querystring = require('qs');
+const _ = require('lodash');
 const pkg = require('../package.json');
 
 /**
@@ -104,6 +105,36 @@ function parsePlain(params, section, stripped) {
 
 /**
  * @function
+ * @private
+ *
+ * @description
+ * Get route coonfiguration object of one or multiple connections by id
+ *
+ * @param {Object} server The related server object
+ * @param {string} id The unique route ID to be looked for
+ * @returns {Object} The route configuration object
+ *
+ * @throws Whether there is no related route
+ */
+function lookupRoute(server, id) {
+  let route;
+
+  if (server.connections.length === 1) {
+    route = server.lookup(id);
+  } else {
+    _.some(server.connections, (connection) => {
+      route = connection.lookup(id);
+      return route;
+    });
+  }
+
+  Hoek.assert(route, 'None of the defined routes match the ID');
+
+  return route;
+}
+
+/**
+ * @function
  * @public
  *
  * @description
@@ -118,15 +149,9 @@ function akaya(server, pluginOptions, next) {
     params = Joi.attempt(params, internals.scheme.params);
     options = Joi.attempt(options, internals.scheme.options);
 
-    const route = Object.assign({}, server.lookup(id));
-    let protocol = this.headers['x-forwarded-proto'] || this.connection.info.protocol;
-
-    Hoek.assert(
-      !Hoek.deepEqual({}, route),
-      'None of the defined routes match the ID'
-    );
-
+    const route = Object.assign({}, lookupRoute(server, id));
     const routeSections = route.path.match(internals.regexp.params) || [];
+    let protocol = this.headers['x-forwarded-proto'] || this.connection.info.protocol;
 
     routeSections.forEach(routeSection => {
       const stripped = routeSection.replace(internals.regexp.braces, '');

@@ -10,15 +10,24 @@ const plugin = require('../src');
  * 
  * @returns {Object} The needed fixtures
  */
-const setup = () => {
+const setup = (multiple = false) => {
   const fixtures = {
     server: new Hapi.Server(),
   };
 
   fixtures.server.connection({
     port: 1337,
-    host: 'localhost'
+    host: 'localhost',
+    labels: ['a'],
   });
+
+  if (multiple) {
+    fixtures.server.connection({
+      port: 1338,
+      host: 'localhost',
+      labels: ['b'],
+    });
+  }
 
   fixtures.server.register(plugin, err => {});
 

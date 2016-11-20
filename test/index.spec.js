@@ -27,6 +27,69 @@ test('akaya >> gets a URI to a named route', t => {
   });
 });
 
+test('akaya >> works with multiple connections', t => {
+  const { server } = setup(true);
+
+  server.select('a').route([{
+    method: 'GET',
+    path: '/',
+    handler: function (request, reply) {
+      reply(request.aka('foo'));
+    }
+  }, {
+    method: 'GET',
+    path: '/foo',
+    config: {
+      id: 'foo',
+      handler: function (request, reply) {
+        reply();
+      }
+    }
+  }]);
+
+  server.select('a').inject('/', res => {
+    t.equal(res.payload, 'http://localhost:1337/foo');
+    t.end();
+  });
+});
+
+test('akaya >> works across multiple connections', t => {
+  const { server } = setup(true);
+
+  server.select('a').route([{
+    method: 'GET',
+    path: '/',
+    handler: function (request, reply) {
+      reply(request.aka('bar'));
+    }
+  }, {
+    method: 'GET',
+    path: '/foo',
+    config: {
+      id: 'foo',
+      handler: function (request, reply) {
+        reply();
+      }
+    }
+  }]);
+
+  server.select('b').route({
+    method: 'GET',
+    path: '/bar',
+    config: {
+      id: 'bar',
+      handler: function (request, reply) {
+        reply();
+      }
+    }
+  });
+
+  server.select('a').inject('/', res => {
+    t.equal(res.payload, 'http://localhost:1337/bar');
+    t.end();
+  });
+});
+
 test('akaya >> works with routes inside prefixed plugins', t => {
   const { server } = setup();
 
