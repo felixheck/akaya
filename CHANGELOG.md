@@ -2,6 +2,14 @@
 
 ### unreleased
 
+### [v1.0.0] - 2016-11-20
+- **add:** support for multiple connections and lodash
+- **fix:** eslint config
+- **fix:** eslint config and linting issues
+- **upg:** several dependencies
+- **doc:** update version
+- **doc:** add multi connection support
+
 ### [v0.3.0] - 2016-10-12
 - **upg:** several dev and prod dependencies
 - **add:** yarn support

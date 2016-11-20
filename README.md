@@ -47,6 +47,8 @@ If you want to change from `hapi-to` to `akaya` for performance reasons, just re
 
 It just differs in the [configuration](#api) of `options.secure`. The value `"match"` is not available in `akaya`. The plugin matches the current request's connections protocol automatically as default.
 
+Additionally `akaya` works across multiple connections without any configuration overhead.
+
 #### Import
 First you have to import the module:
 ``` js
