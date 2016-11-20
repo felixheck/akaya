@@ -2,6 +2,9 @@
 
 ### unreleased
 
+### [v1.0.1] - 2016-11-20
+- **doc:** update version
+
 ### [v1.0.0] - 2016-11-20
 - **add:** support for multiple connections and lodash
 - **fix:** eslint config
