@@ -145,13 +145,11 @@ function lookupRoute(server, id) {
  * @param {Function} next The callback to continue in the chain of plugins
  */
 function akaya(server, pluginOptions, next) {
-  server.decorate('request', 'aka', function decorator(id, params = {}, options = {}) {
+  server.decorate('server', 'aka', function decorator(id, params = {}) {
     params = Joi.attempt(params, internals.scheme.params);
-    options = Joi.attempt(options, internals.scheme.options);
 
     const route = Object.assign({}, lookupRoute(server, id));
     const routeSections = route.path.match(internals.regexp.params) || [];
-    let protocol = this.headers['x-forwarded-proto'] || this.connection.info.protocol;
 
     routeSections.forEach(routeSection => {
       const stripped = routeSection.replace(internals.regexp.braces, '');
@@ -173,9 +171,19 @@ function akaya(server, pluginOptions, next) {
       route.path = route.path.replace(/\?$/, '');
     }
 
+    return route.path;
+  });
+
+  server.decorate('request', 'aka', function decorator(id, params = {}, options = {}) {
+    const path = server.aka(id, params);
+
     if (options.rel) {
-      return route.path;
+      return path;
     }
+
+    options = Joi.attempt(options, internals.scheme.options);
+
+    let protocol = this.headers['x-forwarded-proto'] || this.connection.info.protocol;
 
     if (options.secure === true) {
       protocol = 'https';
@@ -183,7 +191,7 @@ function akaya(server, pluginOptions, next) {
       protocol = 'http';
     }
 
-    return `${protocol}://${options.host || this.info.host}${route.path}`;
+    return `${protocol}://${options.host || this.info.host}${path}`;
   });
 
   next();
