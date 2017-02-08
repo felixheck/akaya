@@ -145,7 +145,7 @@ function lookupRoute(server, id) {
  * @param {Function} next The callback to continue in the chain of plugins
  */
 function akaya(server, pluginOptions, next) {
-  server.decorate('server', 'aka', function decorator(id, params = {}) {
+  server.decorate('server', 'aka', function serverDecorator(id, params = {}) {
     params = Joi.attempt(params, internals.scheme.params);
 
     const route = Object.assign({}, lookupRoute(server, id));
@@ -174,7 +174,7 @@ function akaya(server, pluginOptions, next) {
     return route.path;
   });
 
-  server.decorate('request', 'aka', function decorator(id, params = {}, options = {}) {
+  server.decorate('request', 'aka', function requestDecorator(id, params = {}, options = {}) {
     const path = server.aka(id, params);
 
     if (options.rel) {

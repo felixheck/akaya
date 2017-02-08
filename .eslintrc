@@ -12,6 +12,7 @@
   },
   "rules": {
     "no-param-reassign": [1, { "props": false }],
-    "arrow-parens": [2, "as-needed"]
+    "arrow-parens": [2, "as-needed"],
+    "prefer-arrow-callback": 0
   }
 }
