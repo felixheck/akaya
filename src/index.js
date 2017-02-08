@@ -123,11 +123,8 @@ function lookupRoute(server, id) {
   } else {
     server.connections.some(connection => {
       route = connection.lookup(id);
-      if (route !== null) {
-        return true;
-      }
 
-      return false;
+      return route;
     });
   }
 
