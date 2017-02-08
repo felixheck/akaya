@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const Hoek = require('hoek');
 const Querystring = require('qs');
-const _ = require('lodash');
 const pkg = require('../package.json');
 
 /**
@@ -122,9 +121,13 @@ function lookupRoute(server, id) {
   if (server.connections.length === 1) {
     route = server.lookup(id);
   } else {
-    _.some(server.connections, connection => {
+    server.connections.some(connection => {
       route = connection.lookup(id);
-      return route;
+      if (route !== null) {
+        return true;
+      }
+
+      return false;
     });
   }
 
