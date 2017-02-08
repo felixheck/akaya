@@ -394,12 +394,6 @@ test('akaya >> server method for relative URI is accessible', t => {
 
   server.route([{
     method: 'GET',
-    path: '/',
-    handler: function (request, reply) {
-      reply(request.aka('foo'));
-    }
-  }, {
-    method: 'GET',
     path: '/foo',
     config: {
       id: 'foo',
