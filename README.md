@@ -194,7 +194,7 @@ Do not forget to add corresponding tests to keep up 100% test coverage.
 In case of questions or suggestions just open an issue.
 
 ## License
-Copyright (c) Matt Harrison (2015-2016) and Felix Heck (2016)
+Copyright (c) Matt Harrison (2015-2016) and Felix Heck (2016-2017)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

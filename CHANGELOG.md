@@ -1,6 +1,7 @@
 # master
 
 ### unreleased
+- **doc:** update license year
 
 ### [v1.0.1] - 2016-11-20
 - **doc:** update version
