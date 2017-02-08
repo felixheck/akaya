@@ -81,6 +81,14 @@ server.register(akaya, err => {
 After registering `akaya`, the [hapi request object](hapijs.com/api#request-object) will be decorated with the new method `request.aka()`.
 
 ## API
+`server.aka(id, [params])`
+
+Returns an relative URI to a route
+- `id {string}` - required routes `config.id`.
+- `params`
+  - `query {Object.<?string>}` - Necessary query parameters, which will be stringified.
+  - `params {Object.<?string>}` - Necessary path parameters.
+
 `request.aka(id, [params], [options])`
 
 Returns an URI to a route
