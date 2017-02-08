@@ -47,7 +47,7 @@ If you want to change from `hapi-to` to `akaya` for performance reasons, just re
 
 It just differs in the [configuration](#api) of `options.secure`. The value `"match"` is not available in `akaya`. The plugin matches the current request's connections protocol automatically as default.
 
-Additionally `akaya` works across multiple connections without any configuration overhead.
+Additionally `akaya` works across multiple connections without any configuration overhead and parts of the functionality is exposed as server method.
 
 #### Import
 First you have to import the module:
@@ -78,7 +78,7 @@ server.register(akaya, err => {
 });
 ```
 
-After registering `akaya`, the [hapi request object](hapijs.com/api#request-object) will be decorated with the new method `request.aka()`.
+After registering `akaya`, the [hapi request object](hapijs.com/api#request-object) and the[hapi server object](https://hapijs.com/api#server) will be decorated with the new methods `request.aka()` and `server.aka()`.
 
 ## API
 `server.aka(id, [params])`
@@ -92,10 +92,8 @@ Returns an relative URI to a route
 `request.aka(id, [params], [options])`
 
 Returns an URI to a route
-- `id {string}` - required routes `config.id`.
-- `params`
-  - `query {Object.<?string>}` - Necessary query parameters, which will be stringified.
-  - `params {Object.<?string>}` - Necessary path parameters.
+- `id {string}` - see above
+- `params` – see above
 - `options`
   - `rel {boolean}` - Whether to generate a relative URL. Default: `false`.
   - `secure {boolean}` - If `true` the URL will be https, if `false` will be http. Default: match the `x-forwarded-proto` header or the current request's connection protocol.
@@ -137,7 +135,7 @@ server.route([{
     config: {
         id: 'foo',
         handler: function (request, reply) {
-					return reply('No more redirects.');
+            return reply('No more redirects.');
         }
     }
 }, {
