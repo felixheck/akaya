@@ -32,7 +32,6 @@
     "precoverage": "rm -rf coverage"
   },
   "devDependencies": {
-    "eslint-plugin-jsx-a11y": "^3.0.1",
     "hapi": "^15.2.0",
     "istanbul": "^1.0.0-alpha.2",
     "sinon": "^1.17.6",
