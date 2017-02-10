@@ -2,6 +2,14 @@
 
 ### unreleased
 
+### [v2.1.0] – 2017-02-10
+- **rmv:** eslint and babel
+- **add:** standard
+- **fix:** es6 compatibility
+- **fix:** linting errors
+- **doc:** adjust changes
+- **doc:** bump version
+
 ### [v2.0.0] - 2017-02-09
 - **doc:** update license year
 - **doc:** update info about server methods
