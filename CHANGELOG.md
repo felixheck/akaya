@@ -2,6 +2,10 @@
 
 ### unreleased
 
+### [v2.1.1] – 2017-02-10
+- **fix:** dependencies
+- **doc:** bump version
+
 ### [v2.1.0] – 2017-02-10
 - **rmv:** eslint and babel
 - **add:** standard
