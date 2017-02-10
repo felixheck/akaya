@@ -34,7 +34,6 @@
   "devDependencies": {
     "hapi": "^15.2.0",
     "istanbul": "^1.0.0-alpha.2",
-    "sinon": "^1.17.6",
     "standard": "^8.6.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.6.2",
