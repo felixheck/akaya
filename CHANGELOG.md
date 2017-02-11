@@ -2,6 +2,7 @@
 
 ### unreleased
 - **add:** .editorconfig
+- **doc:** fix badges
 
 ### [v2.1.2] – 2017-02-10
 - **fix:** dependencies
