@@ -19,7 +19,7 @@
 
 This [hapi](https://github.com/hapijs/hapi) plugin enables to generate URIs dynamically based on the `config.id` of a route and passed parameters. It supports mandatory, multiple and optionals parameters as well as wildcards. Because it is not necessary to hardcode the URIs, it supersedes further adjustments in the case of refactoring.
 
-This plugin is based on a [hapi-to](https://github.com/mtharrison/hapi-to) fork but it is about 30x faster. The plugin is implemented in ECMAScript 6. Additionally `standard` and `tape` are used to grant a high quality implementation.
+This plugin is based on a [hapi-to](https://github.com/mtharrison/hapi-to) fork but it is about 30x faster. This plugin is implemented in ECMAScript 6 without any transpilers like `babel`. Additionally `standard` and `tape` are used to grant a high quality implementation.
 
 ## Installation
 For installation use the [Node Package Manager](https://github.com/npm/npm):
