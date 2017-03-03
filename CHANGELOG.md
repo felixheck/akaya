@@ -1,10 +1,14 @@
 # master
 
 ### unreleased
+
+### [v2.1.3] – 2017-03-03
 - **add:** .editorconfig
 - **doc:** fix badges
 - **fix:** travis config
 - **doc:** fix flaws
+- **fix:** travis config
+- **doc:** bump version
 
 ### [v2.1.2] – 2017-02-10
 - **fix:** dependencies
