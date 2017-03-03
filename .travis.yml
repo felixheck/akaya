@@ -7,6 +7,6 @@ node_js:
 before_script:
   - npm install
 
-  script:
+script:
   - npm run lint
   - npm test
