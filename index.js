@@ -33,7 +33,22 @@ const internals = {
  * @function
  * @private
  *
- * @description
+ * Check if condition is true and throw error if not
+ *
+ * @param {any} condition The condition to be checked
+ * @param {any} [msg=''] The error message
+ * @param {string} [type='badRequest'] The error type
+ */
+function assert (condition, msg = '', type = 'badRequest') {
+  if (!condition) {
+    throw boom[type](msg)
+  }
+}
+
+/**
+ * @function
+ * @private
+ *
  * Parse optional parameters
  *
  * @param {Object} params The parameters to be inserted
@@ -55,7 +70,6 @@ function parseOptional (params, section, stripped) {
  * @function
  * @private
  *
- * @description
  * Parse multi-parameters
  *
  * @param {Object} params The parameters to be inserted
@@ -67,19 +81,11 @@ function parseMulti (params, section, stripped) {
   const split = stripped.split('*')
   const value = params[split[0]]
 
-  if (!Array.isArray(value)) {
-    throw boom.badRequest(`The ${stripped} parameter should be an array`)
-  }
-
-  if (parseInt(split[1], 10) !== value.length) {
-    throw boom.badRequest(`'The number of passed multi-parameters does not match the defined multiplier'`)
-  }
+  assert(Array.isArray(value), `The ${stripped} parameter should be an array`)
+  assert(parseInt(split[1], 10) === value.length, 'The number of passed multi-parameters does not match the defined multiplier')
 
   const src = value.join('/')
-
-  if (!src) {
-    throw boom.badRequest(`The '${stripped} parameter is missing`)
-  }
+  assert(src, `The '${stripped} parameter is missing`)
 
   return { dst: section, src }
 }
@@ -88,7 +94,6 @@ function parseMulti (params, section, stripped) {
  * @function
  * @private
  *
- * @description
  * Parse plain parameters
  *
  * @param {Object} params The parameters to be inserted
@@ -98,10 +103,7 @@ function parseMulti (params, section, stripped) {
  */
 function parsePlain (params, section, stripped) {
   stripped = stripped.replace(internals.regexp.wildcard, '')
-
-  if (!(params && params[stripped])) {
-    throw boom.badRequest(`The '${stripped}' parameter is missing`)
-  }
+  assert(params && params[stripped], `The '${stripped}' parameter is missing`)
 
   return { dst: section, src: params[stripped] }
 }
@@ -110,8 +112,7 @@ function parsePlain (params, section, stripped) {
  * @function
  * @private
  *
- * @description
- * Get route coonfiguration object of one or multiple connections by id
+ * Get route configuration object of one or multiple connections by id
  *
  * @param {Object} server The related server object
  * @param {string} id The unique route ID to be looked for
@@ -121,10 +122,7 @@ function parsePlain (params, section, stripped) {
  */
 function lookupRoute (server, id) {
   const route = server.lookup(id)
-
-  if (!route) {
-    throw boom.notFound('There is no route with the defined ID')
-  }
+  assert(route, 'There is no route with the defined ID', 'notFound')
 
   return route
 }
@@ -133,7 +131,6 @@ function lookupRoute (server, id) {
  * @function
  * @public
  *
- * @description
  * Plugin to generate URIs based on ID and parameters
  *
  * @param {Object} server The server to be extended
