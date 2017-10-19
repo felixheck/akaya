@@ -1,152 +1,119 @@
-const test = require('tape').test
-const { setup } = require('./utils')
+const test = require('ava')
+const helpers = require('./_helpers')
 
-test('akaya/options.secure >> `true` forces https', t => {
-  const { server } = setup()
+test('set `secure` to `true` to force https', async (t) => {
+  const server = await helpers.getServer()
 
-  server.route([{
-    method: 'GET',
-    path: '/',
-    handler: function (request, reply) {
-      reply(request.aka('foo', {}, { secure: true }))
-    }
-  }, {
+  server.route({
     method: 'GET',
     path: '/foo',
     config: {
       id: 'foo',
-      handler: function (request, reply) {
-        reply()
+      handler (request) {
+        return request.aka('foo', {}, { secure: true })
       }
     }
-  }])
-
-  server.inject('/', res => {
-    t.equal(res.payload, 'https://localhost:1337/foo')
-    t.end()
   })
-})
 
-test('akaya/options.secure >> `false` forces http', t => {
-  const { server } = setup()
-
-  server.route([{
+  const res = await server.inject({
     method: 'GET',
-    path: '/',
-    handler: function (request, reply) {
-      reply(request.aka('foo', {}, { secure: false }))
-    }
-  }, {
-    method: 'GET',
-    path: '/foo',
-    config: {
-      id: 'foo',
-      handler: function (request, reply) {
-        reply()
-      }
-    }
-  }])
-
-  server.inject('/', res => {
-    t.equal(res.payload, 'http://localhost:1337/foo')
-    t.end()
-  })
-})
-
-test('akaya/options.secure >> auto detecting secure option as default', t => {
-  const { server } = setup()
-
-  const options = {
-    method: 'GET',
-    url: 'http://localhost:1337',
+    url: '/foo',
     headers: {
       'x-forwarded-proto': 'http'
     }
-  }
+  })
+  t.is(res.payload, 'https://localhost:1337/foo')
+})
 
-  const options2 = {
+test('set `secure` to `false` to force https', async (t) => {
+  const server = await helpers.getServer()
+
+  server.route({
     method: 'GET',
-    url: 'http://localhost:1337',
+    path: '/foo',
+    config: {
+      id: 'foo',
+      handler (request) {
+        return request.aka('foo', {}, { secure: false })
+      }
+    }
+  })
+
+  const res = await server.inject({
+    method: 'GET',
+    url: '/foo',
     headers: {
       'x-forwarded-proto': 'https'
     }
-  }
-
-  server.route([{
-    method: 'GET',
-    path: '/',
-    handler: function (request, reply) {
-      reply(request.aka('foo', {}))
-    }
-  }, {
-    method: 'GET',
-    path: '/foo',
-    config: {
-      id: 'foo',
-      handler: function (request, reply) {
-        reply()
-      }
-    }
-  }])
-
-  server.inject(options, res => {
-    t.equal(res.payload, 'http://localhost:1337/foo')
-
-    server.inject(options2, res2 => {
-      t.equal(res2.payload, 'https://localhost:1337/foo')
-      t.end()
-    })
   })
+  t.is(res.payload, 'http://localhost:1337/foo')
 })
 
-test('akaya/options.rel >> `true` returns a relative URI', t => {
-  const { server } = setup()
+test('set `secure` to `undefined` to auto detect', async (t) => {
+  const server = await helpers.getServer()
 
-  server.route([{
-    method: 'GET',
-    path: '/',
-    handler: function (request, reply) {
-      reply(request.aka('foo', { }, { rel: true }))
-    }
-  }, {
+  server.route({
     method: 'GET',
     path: '/foo',
     config: {
       id: 'foo',
-      handler: function (request, reply) {
-        reply()
+      handler (request) {
+        return request.aka('foo')
       }
     }
-  }])
-
-  server.inject('/', res => {
-    t.equal(res.payload, '/foo')
-    t.end()
   })
+
+  const res1 = await server.inject({
+    method: 'GET',
+    url: '/foo',
+    headers: {
+      'x-forwarded-proto': 'http'
+    }
+  })
+  t.is(res1.payload, 'http://localhost:1337/foo')
+
+  const res2 = await server.inject({
+    method: 'GET',
+    url: '/foo',
+    headers: {
+      'x-forwarded-proto': 'https'
+    }
+  })
+  t.is(res2.payload, 'https://localhost:1337/foo')
 })
 
-test(' akaya/options.host >> overrides the host if set', t => {
-  const { server } = setup()
+test('set `rel` to `true` to return a relative uri', async (t) => {
+  const server = await helpers.getServer()
 
-  server.route([{
-    method: 'GET',
-    path: '/',
-    handler: function (request, reply) {
-      reply(request.aka('foo', { }, { host: 'foobar.io:5000' }))
-    }
-  }, {
+  server.route({
     method: 'GET',
     path: '/foo',
     config: {
       id: 'foo',
-      handler: function (request, reply) {
-        reply()
+      handler (request) {
+        return request.aka('foo', { }, { rel: true })
       }
     }
-  }])
-
-  server.inject('/', res => {
-    t.equal(res.payload, 'http://foobar.io:5000/foo')
-    t.end()
   })
+
+  const res = await server.inject('/foo')
+  t.is(res.payload, '/foo')
+})
+
+test('set `host` to overrides the host', async (t) => {
+  const server = await helpers.getServer()
+
+  server.route({
+    method: 'GET',
+    path: '/foo',
+    config: {
+      id: 'foo',
+      handler (request) {
+        return request.aka('foo', { }, { host: 'foobar.io:5000' })
+      }
+    }
+  })
+
+  const res = await server.inject('/foo')
+  t.is(res.payload, 'http://foobar.io:5000/foo')
 })
