@@ -7,7 +7,6 @@ const pkg = require('./package.json')
  * @type {Object}
  * @private
  *
- * @description
  * Store internal objects
  */
 const internals = {
@@ -131,42 +130,53 @@ function lookupRoute (server, id) {
  * @function
  * @public
  *
+ * Handle the basic operations with relative paths
+ *
+ * @param {Object} server The server to be extended
+ * @param {string} id The unique route ID to be looked for
+ * @param {Object} params The parameters to be inserted
+ */
+function serverDecorator (server, id, params = {}) {
+  params = joi.attempt(params, internals.scheme.params)
+
+  const route = Object.assign({}, lookupRoute(server, id))
+  const routeSections = route.path.match(internals.regexp.params) || []
+
+  routeSections.forEach((routeSection) => {
+    const stripped = routeSection.replace(internals.regexp.braces, '')
+    let parsed
+
+    if (stripped.includes('?')) {
+      parsed = parseOptional(params.params, routeSection, stripped)
+    } else if (stripped.includes('*') && stripped.slice(-1) !== '*') {
+      parsed = parseMulti(params.params, routeSection, stripped)
+    } else {
+      parsed = parsePlain(params.params, routeSection, stripped)
+    }
+
+    route.path = route.path.replace(parsed.dst, parsed.src)
+  })
+
+  if (params.query) {
+    route.path += `?${qs.stringify(params.query)}`
+    route.path = route.path.replace(/\?$/, '')
+  }
+
+  return route.path
+}
+
+/**
+ * @function
+ * @public
+ *
  * Plugin to generate URIs based on ID and parameters
  *
  * @param {Object} server The server to be extended
  * @param {Object} pluginOptions The plugin options
  */
 async function akaya (server, pluginOptions) {
-  server.decorate('server', 'aka', function serverDecorator (id, params = {}) {
-    params = joi.attempt(params, internals.scheme.params)
-
-    const route = Object.assign({}, lookupRoute(server, id))
-    const routeSections = route.path.match(internals.regexp.params) || []
-
-    routeSections.forEach((routeSection) => {
-      const stripped = routeSection.replace(internals.regexp.braces, '')
-      let parsed
-
-      if (stripped.includes('?')) {
-        parsed = parseOptional(params.params, routeSection, stripped)
-      } else if (stripped.includes('*') && stripped.slice(-1) !== '*') {
-        parsed = parseMulti(params.params, routeSection, stripped)
-      } else {
-        parsed = parsePlain(params.params, routeSection, stripped)
-      }
-
-      route.path = route.path.replace(parsed.dst, parsed.src)
-    })
-
-    if (params.query) {
-      route.path += `?${qs.stringify(params.query)}`
-      route.path = route.path.replace(/\?$/, '')
-    }
-
-    return route.path
-  })
-
-  server.decorate('request', 'aka', function requestDecorator (id, params = {}, options = {}) {
+  server.decorate('server', 'aka', serverDecorator.bind(this, server))
+  server.decorate('request', 'aka', function (id, params = {}, options = {}) {
     options = joi.attempt(options, internals.scheme.options)
 
     const path = server.aka(id, params)

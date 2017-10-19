@@ -5,7 +5,6 @@ const plugin = require('../index')
  * @function
  * @public
  *
- * @description
  * Setup and expose an Hapi server connection
  *
  * @returns {Object} The server
