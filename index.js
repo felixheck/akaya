@@ -1,6 +1,6 @@
-const Joi = require('joi')
-const Hoek = require('hoek')
-const Querystring = require('qs')
+const joi = require('joi')
+const boom = require('boom')
+const qs = require('qs')
 const pkg = require('./package.json')
 
 /**
@@ -18,13 +18,13 @@ const internals = {
   },
   scheme: {
     params: {
-      query: Joi.object(),
-      params: Joi.object()
+      query: joi.object(),
+      params: joi.object()
     },
     options: {
-      secure: Joi.boolean(),
-      rel: Joi.boolean().default(false),
-      host: Joi.string()
+      secure: joi.boolean(),
+      rel: joi.boolean().default(false),
+      host: joi.string()
     }
   }
 }
@@ -43,7 +43,7 @@ const internals = {
  */
 function parseOptional (params, section, stripped) {
   stripped = stripped.slice(0, -1)
-  const key = params && params[stripped] ? params[stripped] : ''
+  const key = params && params[stripped] || ''
 
   return {
     dst: key && key.toString() ? section : `/${section}`,
@@ -67,18 +67,19 @@ function parseMulti (params, section, stripped) {
   const split = stripped.split('*')
   const value = params[split[0]]
 
-  Hoek.assert(
-    Array.isArray(value),
-    `The ${stripped} parameter should be an array`
-  )
+  if (!Array.isArray(value)) {
+    throw boom.badRequest(`The ${stripped} parameter should be an array`)
+  }
 
-  Hoek.assert(
-    parseInt(split[1], 10) === value.length,
-    'The number of passed multi-parameters does not match the defined multiplier'
-  )
+  if (parseInt(split[1], 10) !== value.length) {
+    throw boom.badRequest(`'The number of passed multi-parameters does not match the defined multiplier'`)
+  }
 
   const src = value.join('/')
-  Hoek.assert(src, `The '${stripped} parameter is missing`)
+
+  if (!src) {
+    throw boom.badRequest(`The '${stripped} parameter is missing`)
+  }
 
   return { dst: section, src }
 }
@@ -97,7 +98,10 @@ function parseMulti (params, section, stripped) {
  */
 function parsePlain (params, section, stripped) {
   stripped = stripped.replace(internals.regexp.wildcard, '')
-  Hoek.assert(params && params[stripped], `The '${stripped}' parameter is missing`)
+
+  if (!(params && params[stripped])) {
+    throw boom.badRequest(`The '${stripped}' parameter is missing`)
+  }
 
   return { dst: section, src: params[stripped] }
 }
@@ -116,19 +120,11 @@ function parsePlain (params, section, stripped) {
  * @throws Whether there is no related route
  */
 function lookupRoute (server, id) {
-  let route
+  const route = server.lookup(id)
 
-  if (server.connections.length === 1) {
-    route = server.lookup(id)
-  } else {
-    server.connections.some(connection => {
-      route = connection.lookup(id)
-
-      return route
-    })
+  if (!route) {
+    throw boom.notFound('There is no route with the defined ID')
   }
-
-  Hoek.assert(route, 'None of the defined routes match the ID')
 
   return route
 }
@@ -142,16 +138,15 @@ function lookupRoute (server, id) {
  *
  * @param {Object} server The server to be extended
  * @param {Object} pluginOptions The plugin options
- * @param {Function} next The callback to continue in the chain of plugins
  */
-function akaya (server, pluginOptions, next) {
+async function akaya (server, pluginOptions) {
   server.decorate('server', 'aka', function serverDecorator (id, params = {}) {
-    params = Joi.attempt(params, internals.scheme.params)
+    params = joi.attempt(params, internals.scheme.params)
 
     const route = Object.assign({}, lookupRoute(server, id))
     const routeSections = route.path.match(internals.regexp.params) || []
 
-    routeSections.forEach(routeSection => {
+    routeSections.forEach((routeSection) => {
       const stripped = routeSection.replace(internals.regexp.braces, '')
       let parsed
 
@@ -167,7 +162,7 @@ function akaya (server, pluginOptions, next) {
     })
 
     if (params.query) {
-      route.path += `?${Querystring.stringify(params.query)}`
+      route.path += `?${qs.stringify(params.query)}`
       route.path = route.path.replace(/\?$/, '')
     }
 
@@ -175,32 +170,31 @@ function akaya (server, pluginOptions, next) {
   })
 
   server.decorate('request', 'aka', function requestDecorator (id, params = {}, options = {}) {
+    options = joi.attempt(options, internals.scheme.options)
+
     const path = server.aka(id, params)
+    let protocol
 
     if (options.rel) {
       return path
     }
 
-    options = Joi.attempt(options, internals.scheme.options)
-
-    let protocol = this.headers['x-forwarded-proto'] || this.connection.info.protocol
-
-    if (options.secure === true) {
-      protocol = 'https'
-    } else if (options.secure === false) {
-      protocol = 'http'
+    switch (options.secure) {
+      case true:
+        protocol = 'https'
+        break
+      case false:
+        protocol = 'http'
+        break
+      default:
+        protocol = this.headers['x-forwarded-proto'] || server.info.protocol
     }
 
     return `${protocol}://${options.host || this.info.host}${path}`
   })
-
-  next()
-}
-
-akaya.attributes = {
-  pkg
 }
 
 module.exports = {
-  register: akaya
+  register: akaya,
+  pkg
 }
