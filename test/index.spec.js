@@ -19,7 +19,6 @@ test('get the url of a named route', async (t) => {
   t.is(res.payload, 'http://localhost:1337/foo')
 })
 
-
 test('throw if no route matches', async (t) => {
   const server = await helpers.getServer()
 

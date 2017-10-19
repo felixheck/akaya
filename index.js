@@ -57,7 +57,7 @@ function assert (condition, msg = '', type = 'badRequest') {
  */
 function parseOptional (params, section, stripped) {
   stripped = stripped.slice(0, -1)
-  const key = params && params[stripped] || ''
+  const key = (params && params[stripped]) || ''
 
   return {
     dst: key && key.toString() ? section : `/${section}`,
