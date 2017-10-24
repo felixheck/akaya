@@ -174,7 +174,7 @@ function serverDecorator (server, id, params = {}) {
  * @param {Object} server The server to be extended
  * @param {Object} pluginOptions The plugin options
  */
-async function akaya (server, pluginOptions) {
+function akaya (server, pluginOptions) {
   server.decorate('server', 'aka', serverDecorator.bind(this, server))
   server.decorate('request', 'aka', function (id, params = {}, options = {}) {
     options = joi.attempt(options, internals.scheme.options)
