@@ -138,8 +138,13 @@ server.route([{
 }]);
 
 (async () => {
-  await server.register(akaya);
-  server.start();
+  try {
+    await server.register(akaya);
+    await server.start();
+    console.log('Server started successfully');
+  } catch (err) {
+    console.error(err);
+  }
 })();
 ```
 
