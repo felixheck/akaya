@@ -20,7 +20,7 @@
     "url": "https://github.com/felixheck/akaya.git"
   },
   "bugs": {
-    "email": "hi@whoTheHeck.com",
+    "email": "hi@whotheheck.com",
     "url": "https://github.com/felixheck/akaya/issues"
   },
   "main": "./index.js",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "ava": "^0.21.0",
-    "hapi": "^17.0.0-rc8",
+    "hapi": "^17.0.1",
     "nyc": "^11.0.3",
     "standard": "^10.0.2"
   },
@@ -42,10 +42,10 @@
     "qs": "^6.5.0"
   },
   "peerDependencies": {
-    "hapi": ">=17.x.x"
+    "hapi": "^17.0.0"
   },
   "engines": {
-    "node": ">=8.0.0",
-    "npm": ">=5.0.0"
+    "node": "^8.0.0",
+    "npm": "^5.0.0"
   }
 }
