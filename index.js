@@ -1,13 +1,12 @@
-const Joi = require('joi')
-const Hoek = require('hoek')
-const Querystring = require('qs')
+const joi = require('joi')
+const boom = require('boom')
+const qs = require('qs')
 const pkg = require('./package.json')
 
 /**
  * @type {Object}
  * @private
  *
- * @description
  * Store internal objects
  */
 const internals = {
@@ -18,13 +17,13 @@ const internals = {
   },
   scheme: {
     params: {
-      query: Joi.object(),
-      params: Joi.object()
+      query: joi.object(),
+      params: joi.object()
     },
     options: {
-      secure: Joi.boolean(),
-      rel: Joi.boolean().default(false),
-      host: Joi.string()
+      secure: joi.boolean(),
+      rel: joi.boolean().default(false),
+      host: joi.string()
     }
   }
 }
@@ -33,7 +32,22 @@ const internals = {
  * @function
  * @private
  *
- * @description
+ * Check if condition is true and throw error if not
+ *
+ * @param {any} condition The condition to be checked
+ * @param {any} [msg=''] The error message
+ * @param {string} [type='badRequest'] The error type
+ */
+function assert (condition, msg = '', type = 'badRequest') {
+  if (!condition) {
+    throw boom[type](msg)
+  }
+}
+
+/**
+ * @function
+ * @private
+ *
  * Parse optional parameters
  *
  * @param {Object} params The parameters to be inserted
@@ -43,7 +57,7 @@ const internals = {
  */
 function parseOptional (params, section, stripped) {
   stripped = stripped.slice(0, -1)
-  const key = params && params[stripped] ? params[stripped] : ''
+  const key = (params && params[stripped]) || ''
 
   return {
     dst: key && key.toString() ? section : `/${section}`,
@@ -55,7 +69,6 @@ function parseOptional (params, section, stripped) {
  * @function
  * @private
  *
- * @description
  * Parse multi-parameters
  *
  * @param {Object} params The parameters to be inserted
@@ -67,18 +80,11 @@ function parseMulti (params, section, stripped) {
   const split = stripped.split('*')
   const value = params[split[0]]
 
-  Hoek.assert(
-    Array.isArray(value),
-    `The ${stripped} parameter should be an array`
-  )
-
-  Hoek.assert(
-    parseInt(split[1], 10) === value.length,
-    'The number of passed multi-parameters does not match the defined multiplier'
-  )
+  assert(Array.isArray(value), `The ${stripped} parameter should be an array`)
+  assert(parseInt(split[1], 10) === value.length, 'The number of passed multi-parameters does not match the defined multiplier')
 
   const src = value.join('/')
-  Hoek.assert(src, `The '${stripped} parameter is missing`)
+  assert(src, `The '${stripped} parameter is missing`)
 
   return { dst: section, src }
 }
@@ -87,7 +93,6 @@ function parseMulti (params, section, stripped) {
  * @function
  * @private
  *
- * @description
  * Parse plain parameters
  *
  * @param {Object} params The parameters to be inserted
@@ -97,7 +102,7 @@ function parseMulti (params, section, stripped) {
  */
 function parsePlain (params, section, stripped) {
   stripped = stripped.replace(internals.regexp.wildcard, '')
-  Hoek.assert(params && params[stripped], `The '${stripped}' parameter is missing`)
+  assert(params && params[stripped], `The '${stripped}' parameter is missing`)
 
   return { dst: section, src: params[stripped] }
 }
@@ -106,8 +111,7 @@ function parsePlain (params, section, stripped) {
  * @function
  * @private
  *
- * @description
- * Get route coonfiguration object of one or multiple connections by id
+ * Get route configuration object of one or multiple connections by id
  *
  * @param {Object} server The related server object
  * @param {string} id The unique route ID to be looked for
@@ -116,19 +120,8 @@ function parsePlain (params, section, stripped) {
  * @throws Whether there is no related route
  */
 function lookupRoute (server, id) {
-  let route
-
-  if (server.connections.length === 1) {
-    route = server.lookup(id)
-  } else {
-    server.connections.some(connection => {
-      route = connection.lookup(id)
-
-      return route
-    })
-  }
-
-  Hoek.assert(route, 'None of the defined routes match the ID')
+  const route = server.lookup(id)
+  assert(route, 'There is no route with the defined ID', 'notFound')
 
   return route
 }
@@ -137,70 +130,78 @@ function lookupRoute (server, id) {
  * @function
  * @public
  *
- * @description
+ * Handle the basic operations with relative paths
+ *
+ * @param {Object} server The server to be extended
+ * @param {string} id The unique route ID to be looked for
+ * @param {Object} params The parameters to be inserted
+ */
+function serverDecorator (server, id, params = {}) {
+  params = joi.attempt(params, internals.scheme.params)
+
+  const route = Object.assign({}, lookupRoute(server, id))
+  const routeSections = route.path.match(internals.regexp.params) || []
+
+  routeSections.forEach((routeSection) => {
+    const stripped = routeSection.replace(internals.regexp.braces, '')
+    let parsed
+
+    if (stripped.includes('?')) {
+      parsed = parseOptional(params.params, routeSection, stripped)
+    } else if (stripped.includes('*') && stripped.slice(-1) !== '*') {
+      parsed = parseMulti(params.params, routeSection, stripped)
+    } else {
+      parsed = parsePlain(params.params, routeSection, stripped)
+    }
+
+    route.path = route.path.replace(parsed.dst, parsed.src)
+  })
+
+  if (params.query) {
+    route.path += `?${qs.stringify(params.query)}`
+    route.path = route.path.replace(/\?$/, '')
+  }
+
+  return route.path
+}
+
+/**
+ * @function
+ * @public
+ *
  * Plugin to generate URIs based on ID and parameters
  *
  * @param {Object} server The server to be extended
  * @param {Object} pluginOptions The plugin options
- * @param {Function} next The callback to continue in the chain of plugins
  */
-function akaya (server, pluginOptions, next) {
-  server.decorate('server', 'aka', function serverDecorator (id, params = {}) {
-    params = Joi.attempt(params, internals.scheme.params)
+function akaya (server, pluginOptions) {
+  server.decorate('server', 'aka', serverDecorator.bind(this, server))
+  server.decorate('request', 'aka', function (id, params = {}, options = {}) {
+    options = joi.attempt(options, internals.scheme.options)
 
-    const route = Object.assign({}, lookupRoute(server, id))
-    const routeSections = route.path.match(internals.regexp.params) || []
-
-    routeSections.forEach(routeSection => {
-      const stripped = routeSection.replace(internals.regexp.braces, '')
-      let parsed
-
-      if (stripped.includes('?')) {
-        parsed = parseOptional(params.params, routeSection, stripped)
-      } else if (stripped.includes('*') && stripped.slice(-1) !== '*') {
-        parsed = parseMulti(params.params, routeSection, stripped)
-      } else {
-        parsed = parsePlain(params.params, routeSection, stripped)
-      }
-
-      route.path = route.path.replace(parsed.dst, parsed.src)
-    })
-
-    if (params.query) {
-      route.path += `?${Querystring.stringify(params.query)}`
-      route.path = route.path.replace(/\?$/, '')
-    }
-
-    return route.path
-  })
-
-  server.decorate('request', 'aka', function requestDecorator (id, params = {}, options = {}) {
     const path = server.aka(id, params)
+    let protocol
 
     if (options.rel) {
       return path
     }
 
-    options = Joi.attempt(options, internals.scheme.options)
-
-    let protocol = this.headers['x-forwarded-proto'] || this.connection.info.protocol
-
-    if (options.secure === true) {
-      protocol = 'https'
-    } else if (options.secure === false) {
-      protocol = 'http'
+    switch (options.secure) {
+      case true:
+        protocol = 'https'
+        break
+      case false:
+        protocol = 'http'
+        break
+      default:
+        protocol = this.headers['x-forwarded-proto'] || server.info.protocol
     }
 
     return `${protocol}://${options.host || this.info.host}${path}`
   })
-
-  next()
-}
-
-akaya.attributes = {
-  pkg
 }
 
 module.exports = {
-  register: akaya
+  register: akaya,
+  pkg
 }
