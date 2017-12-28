@@ -66,7 +66,7 @@ Finally register the plugin per `server.register()`:
 })();
 ```
 
-After registering `akaya`, the [hapi request object](hapijs.com/api#request-object) and the[hapi server object](https://hapijs.com/api#server) will be decorated with the new methods `request.aka()` and `server.aka()`.
+After registering `akaya`, the [hapi request object](hapijs.com/api#request-object) and the [hapi server object](https://hapijs.com/api#server) will be decorated with the new methods `request.aka()` and `server.aka()`.
 
 ## API
 `server.aka(id, [params])`
@@ -87,7 +87,7 @@ Returns an URI to a route
   - `secure {boolean}` - If `true` the URL will be https, if `false` will be http. Default: match the `x-forwarded-proto` header or the current request's connection protocol.
   - `host {string}` - Sets the host in the URL. Default: match the current request.
 
-##Example
+## Example
 
 ```js
 const hapi = require('hapi');
