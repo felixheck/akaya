@@ -27,19 +27,19 @@
   "scripts": {
     "start": "npm test -- -w",
     "lint": "standard",
-    "test": "nyc --check-coverage --lines 60 ava --timeout=1m",
+    "test": "nyc --check-coverage --lines 60 ava -s --timeout=1m",
     "coverage": "nyc report --reporter=lcov"
   },
   "devDependencies": {
-    "ava": "^0.21.0",
-    "hapi": "^17.0.1",
-    "nyc": "^11.0.3",
-    "standard": "^10.0.2"
+    "ava": "^0.25.0",
+    "hapi": "^17.4.0",
+    "nyc": "^11.7.2",
+    "standard": "^11.0.1"
   },
   "dependencies": {
-    "boom": "^6.0.0",
-    "joi": "^13.0.0",
-    "qs": "^6.5.0"
+    "boom": "^7.2.0",
+    "joi": "^13.3.0",
+    "qs": "^6.5.2"
   },
   "peerDependencies": {
     "hapi": "^17.0.0"
