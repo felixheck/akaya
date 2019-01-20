@@ -22,6 +22,13 @@ This plugin is based on a [hapi-to](https://github.com/mtharrison/hapi-to) fork 
 The modules `standard` and `tape` are used to grant a high quality implementation.<br/>
 This major release supports just [hapi.js](https://github.com/hapijs/hapi) `>=v17.0.0` and node `>=v8.0.0` — to support older versions please use `v2.1.4`.
 
+#### Compatibility
+| Major Release | [hapi.js](https://github.com/hapijs/hapi) version | node version |
+| --- | --- | --- |
+| `v4` | `>=18` | `>=10` |
+| `v3` | `>=17` | `>=8` |
+| `v2` | `>=13` | `>=6` |
+
 ## Installation
 For installation use the [Node Package Manager](https://github.com/npm/npm):
 ```
