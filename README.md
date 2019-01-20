@@ -20,7 +20,6 @@ This [hapi](https://github.com/hapijs/hapi) plugin enables to generate URIs dyna
 
 This plugin is based on a [hapi-to](https://github.com/mtharrison/hapi-to) fork but it is about 30x faster.<br/>
 The modules `standard` and `tape` are used to grant a high quality implementation.<br/>
-This major release supports just [hapi.js](https://github.com/hapijs/hapi) `>=v17.0.0` and node `>=v8.0.0` — to support older versions please use `v2.1.4`.
 
 #### Compatibility
 | Major Release | [hapi.js](https://github.com/hapijs/hapi) version | node version |
