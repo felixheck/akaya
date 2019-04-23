@@ -57,7 +57,7 @@ const akaya = require('akaya');
 #### Create hapi server
 Afterwards create your hapi server if not already done:
 ``` js
-const hapi = require('hapi');
+const hapi = require('@hapi/hapi');
 const server = hapi.server({
   port: 1337,
   host: 'localhost',
