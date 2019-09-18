@@ -16,15 +16,17 @@ const internals = {
     wildcard: /\*$/g
   },
   scheme: {
-    params: {
+    params: joi.object({
       query: joi.object(),
       params: joi.object()
-    },
-    options: {
+    }),
+    options: joi.object({
       secure: joi.boolean(),
       rel: joi.boolean().default(false),
       host: joi.string()
-    }
+    }).default({
+      host: false
+    })
   }
 }
 
