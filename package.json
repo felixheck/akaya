@@ -37,7 +37,7 @@
     "standard": "^14.3.0"
   },
   "dependencies": {
-    "@hapi/boom": "^7.4.3",
+    "@hapi/boom": "^8.0.1",
     "@hapi/joi": "^16.1.1",
     "qs": "^6.8.0"
   },
