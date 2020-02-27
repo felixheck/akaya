@@ -145,12 +145,12 @@ function serverDecorator (server, id, params = {}, options = {}) {
   params = joi.attempt(params, internals.scheme.params)
   options = joi.attempt(options, internals.scheme.options)
 
-  let route;
+  let route
 
-  if(options.router) {
-    route = options.router.ids.get(id);
+  if (options.router) {
+    route = options.router.ids.get(id)
     assert(route, `There is no route on the router with the defined ID (${id})`, 'notFound')
-  }else {
+  } else {
     route = Object.assign({}, lookupRoute(server, id))
   }
 
