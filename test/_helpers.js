@@ -20,6 +20,19 @@ const getServer = async () => {
   return server
 }
 
+/**
+ * @function
+ * @public
+ *
+ * Setup and expose a Call router
+ *
+ * @returns {Object} Router
+ */
+const getRouter = async () => {
+  return new call.Router();
+};
+
 module.exports = {
-  getServer
+  getServer,
+  getRouter
 }

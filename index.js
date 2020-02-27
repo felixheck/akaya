@@ -1,6 +1,7 @@
 const joi = require('@hapi/joi')
 const boom = require('@hapi/boom')
 const qs = require('qs')
+const call = require('@hapi/call')
 const pkg = require('./package.json')
 
 /**
@@ -23,9 +24,11 @@ const internals = {
     options: joi.object({
       secure: joi.boolean(),
       rel: joi.boolean().default(false),
-      host: joi.string()
+      host: joi.string(),
+      router: joi.object().instance(call.Router)
     }).default({
-      host: false
+      host: false,
+      router: false
     })
   }
 }
@@ -138,10 +141,19 @@ function lookupRoute (server, id) {
  * @param {string} id The unique route ID to be looked for
  * @param {Object} params The parameters to be inserted
  */
-function serverDecorator (server, id, params = {}) {
+function serverDecorator (server, id, params = {}, options = {}) {
   params = joi.attempt(params, internals.scheme.params)
+  options = joi.attempt(options, internals.scheme.options)
 
-  const route = Object.assign({}, lookupRoute(server, id))
+  let route;
+
+  if(options.router) {
+    route = options.router.ids.get(id);
+    assert(route, `There is no route on the router with the defined ID (${id})`, 'notFound')
+  }else {
+    route = Object.assign({}, lookupRoute(server, id))
+  }
+
   const routeSections = route.path.match(internals.regexp.params) || []
 
   routeSections.forEach((routeSection) => {
@@ -181,7 +193,7 @@ function akaya (server, pluginOptions) {
   server.decorate('request', 'aka', function (id, params = {}, options = {}) {
     options = joi.attempt(options, internals.scheme.options)
 
-    const path = server.aka(id, params)
+    const path = server.aka(id, params, options)
     let protocol
 
     if (options.rel) {
