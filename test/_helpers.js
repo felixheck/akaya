@@ -1,4 +1,5 @@
 const hapi = require('@hapi/hapi')
+const call = require('@hapi/call')
 const plugin = require('../index')
 
 /**
