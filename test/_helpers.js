@@ -1,4 +1,5 @@
 const hapi = require('@hapi/hapi')
+const call = require('@hapi/call')
 const plugin = require('../index')
 
 /**
@@ -29,7 +30,7 @@ const getServer = async () => {
  * @returns {Object} Router
  */
 const getRouter = async () => {
-  return new call.Router();
+  return new call.Router()
 };
 
 module.exports = {
