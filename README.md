@@ -77,13 +77,15 @@ Finally register the plugin per `server.register()`:
 After registering `akaya`, the [hapi request object](hapijs.com/api#request-object) and the [hapi server object](https://hapijs.com/api#server) will be decorated with the new methods `request.aka()` and `server.aka()`.
 
 ## API
-`server.aka(id, [params])`
+`server.aka(id, [params], [options])`
 
 Returns an relative URI to a route
 - `id {string}` - required routes `config.id`.
 - `params`
   - `query {Object.<?string>}` - Necessary query parameters, which will be stringified.
   - `params {Object.<?string>}` - Necessary path parameters.
+- `options`
+  - `router {call}` - Set a custom [Call](https://github.com/hapijs/call) router
 
 `request.aka(id, [params], [options])`
 
@@ -91,6 +93,7 @@ Returns an URI to a route
 - `id {string}` - see above
 - `params` – see above
 - `options`
+  - `router {call}` - Set a custom [Call](https://github.com/hapijs/call) router
   - `rel {boolean}` - Whether to generate a relative URL. Default: `false`.
   - `secure {boolean}` - If `true` the URL will be https, if `false` will be http. Default: match the `x-forwarded-proto` header or the current request's connection protocol.
   - `host {string}` - Sets the host in the URL. Default: match the current request.
