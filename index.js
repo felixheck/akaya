@@ -119,14 +119,15 @@ function parsePlain (params, section, stripped) {
  * Get route configuration object of one or multiple connections by id
  *
  * @param {Object} server The related server object
+ * @param {call|undefined} The optional custom router
  * @param {string} id The unique route ID to be looked for
  * @returns {Object} The route configuration object
  *
  * @throws Whether there is no related route
  */
-function lookupRoute (server, id) {
-  const route = server.lookup(id)
-  assert(route, 'There is no route with the defined ID', 'notFound')
+function lookupRoute (server, router, id) {
+  const route = router ? router.ids.get(id) : server.lookup(id)
+  assert(route, `There is no route on the router with the defined ID (${id})`, 'notFound')
 
   return route
 }
@@ -145,15 +146,7 @@ function serverDecorator (server, id, params = {}, options = {}) {
   params = joi.attempt(params, internals.scheme.params)
   options = joi.attempt(options, internals.scheme.options)
 
-  let route;
-
-  if(options.router) {
-    route = options.router.ids.get(id);
-    assert(route, `There is no route on the router with the defined ID (${id})`, 'notFound')
-  }else {
-    route = Object.assign({}, lookupRoute(server, id))
-  }
-
+  const route = Object.assign({}, lookupRoute(server, options.router, id))
   const routeSections = route.path.match(internals.regexp.params) || []
 
   routeSections.forEach((routeSection) => {
