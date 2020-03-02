@@ -19,30 +19,30 @@ test('get the url of a named route', async (t) => {
   t.is(res.payload, 'http://localhost:1337/foo')
 })
 
-test("get the url of a named route on custom router", async t => {
-  const server = await helpers.getServer();
-  const customRouter = await helpers.getRouter();
+test('get the url of a named route on custom router', async t => {
+  const server = await helpers.getServer()
+  const customRouter = await helpers.getRouter()
 
   customRouter.add({
-    id: "bar",
-    method: "GET",
-    path: "/bar"
-  });
+    id: 'bar',
+    method: 'GET',
+    path: '/bar'
+  })
 
   server.route({
-    method: "GET",
-    path: "/foo",
+    method: 'GET',
+    path: '/foo',
     config: {
-      id: "foo",
-      handler(request) {
-        return request.aka("bar", {}, { router: customRouter });
+      id: 'foo',
+      handler (request) {
+        return request.aka('bar', {}, { router: customRouter })
       }
     }
-  });
+  })
 
-  const res = await server.inject("/foo");
-  t.is(res.payload, "http://localhost:1337/bar");
-});
+  const res = await server.inject('/foo')
+  t.is(res.payload, 'http://localhost:1337/bar')
+})
 
 test('throw if no route matches', async (t) => {
   const server = await helpers.getServer()
@@ -60,22 +60,22 @@ test('throw if no route matches', async (t) => {
   t.is(res.statusMessage, 'Not Found')
 })
 
-test("throw if no route matches on custom router", async t => {
-  const server = await helpers.getServer();
-  const customRouter = await helpers.getRouter();
+test('throw if no route matches on custom router', async t => {
+  const server = await helpers.getServer()
+  const customRouter = await helpers.getRouter()
 
   server.route({
-    method: "GET",
-    path: "/",
-    handler(request) {
-      return request.aka("foo", {}, { router: customRouter });
+    method: 'GET',
+    path: '/',
+    handler (request) {
+      return request.aka('foo', {}, { router: customRouter })
     }
-  });
+  })
 
-  const res = await server.inject("/");
-  t.is(res.statusCode, 404);
-  t.is(res.statusMessage, "Not Found");
-});
+  const res = await server.inject('/')
+  t.is(res.statusCode, 404)
+  t.is(res.statusMessage, 'Not Found')
+})
 
 test('throw if there is a missing parameter', async (t) => {
   const server = await helpers.getServer()

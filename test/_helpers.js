@@ -31,7 +31,7 @@ const getServer = async () => {
  */
 const getRouter = async () => {
   return new call.Router()
-};
+}
 
 module.exports = {
   getServer,
