@@ -42,7 +42,8 @@
     "qs": "^6.9.1"
   },
   "peerDependencies": {
-    "@hapi/hapi": ">=18.4.0"
+    "@hapi/hapi": ">=18.4.0",
+    "@hapi/call": ">=8.x.x"
   },
   "engines": {
     "node": ">=12",
