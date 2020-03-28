@@ -153,7 +153,7 @@ function serverDecorator (server, id, params = {}, options = {}) {
     const stripped = routeSection.replace(internals.regexp.braces, '')
     let parsed
 
-    if (stripped.includes('?')) {
+    if (stripped.includes('?') || stripped.slice(-1) === '*') {
       parsed = parseOptional(params.params, routeSection, stripped)
     } else if (stripped.includes('*') && stripped.slice(-1) !== '*') {
       parsed = parseMulti(params.params, routeSection, stripped)

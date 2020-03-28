@@ -150,6 +150,60 @@ test('places wildcard parameter in the url', async (t) => {
   const res = await server.inject('/hello/world')
   t.is(res.payload, 'http://localhost:1337/hello/world')
 })
+test('places wildcard parameter in a url with more segments', async (t) => {
+  const server = await helpers.getServer()
+
+  server.route({
+    method: 'GET',
+    path: '/longer-path/{path*}',
+    config: {
+      id: 'foo',
+      handler (request) {
+        return request.aka('foo', { params: { path: 'hello/world' } })
+      }
+    }
+  })
+
+  const res = await server.inject('/longer-path/hello/world')
+  t.is(res.payload, 'http://localhost:1337/longer-path/hello/world')
+})
+
+test('treats wildcard parameter as optional', async (t) => {
+  const server = await helpers.getServer()
+
+  server.route({
+    method: 'GET',
+    path: '/{path*}',
+    config: {
+      id: 'foo',
+      handler (request) {
+        return request.aka('foo')
+      }
+    }
+  })
+
+  const res = await server.inject('/')
+  t.is(res.payload, 'http://localhost:1337')
+})
+
+
+test('treats wildcard parameter as optional in a url with more segments', async (t) => {
+  const server = await helpers.getServer()
+
+  server.route({
+    method: 'GET',
+    path: '/longer-path/{path*}',
+    config: {
+      id: 'foo',
+      handler (request) {
+        return request.aka('foo')
+      }
+    }
+  })
+
+  const res = await server.inject('/longer-path')
+  t.is(res.payload, 'http://localhost:1337/longer-path')
+})
 
 test('places multiple wildcard parameters', async (t) => {
   const server = await helpers.getServer()
