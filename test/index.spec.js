@@ -186,7 +186,6 @@ test('treats wildcard parameter as optional', async (t) => {
   t.is(res.payload, 'http://localhost:1337')
 })
 
-
 test('treats wildcard parameter as optional in a url with more segments', async (t) => {
   const server = await helpers.getServer()
 
