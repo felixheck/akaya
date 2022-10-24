@@ -33,7 +33,7 @@
   "devDependencies": {
     "@hapi/call": "^8.0.0",
     "@hapi/hapi": ">=18.4.0",
-    "ava": "^3.5.0",
+    "ava": "^5.0.1",
     "nyc": "^15.0.0",
     "standard": "^16.0.3"
   },
